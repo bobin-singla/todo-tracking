@@ -1,21 +1,145 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div class="container" style="margin-top: 50px">
+	<div class="row">
+		<div class="float-right" style="width: 100%">
+			<button (click)="openAddTaskForm()" class="float-right">Add Item</button>
+		</div>
+	</div>
+	<div class=row>
+		<div class="col-4">
+			<h2>To do</h2>
+			<div
+				#pendingList="cdkDropList"
+				(cdkDropListDropped)="drop($event)"
+				[cdkDropListConnectedTo]="[doneList, inProcessList]"
+				[cdkDropListData]="pending"
+				cdkDropList
+				class="example-list">
+				<div *ngFor="let task of pending" [cdkDragData]="task" cdkDrag class="example-box todo-container">
+					<span *ngIf="task.priority === 'high'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+</svg>
+					</span>
+					<span *ngIf="task.priority === 'moderate'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
+</svg>
+					</span>
+					<span *ngIf="task.priority === 'low'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+</svg>
+					</span>
+					{{task.title}}
+					<span (click)="editTask(task)" class="edit float-right">Edit</span></div>
+			</div>
+		</div>
 
-<router-outlet></router-outlet>
+		<div class="col-4">
+			<h2>In process</h2>
+
+			<div
+				#inProcessList="cdkDropList"
+				(cdkDropListDropped)="drop($event)"
+				[cdkDropListConnectedTo]="[pendingList, doneList]"
+				[cdkDropListData]="inProcess"
+				cdkDropList
+				class="example-list">
+				<div *ngFor="let task of inProcess" [cdkDragData]="task" cdkDrag class="example-box in-process">
+					<span *ngIf="task.priority === 'high'">
+
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+</svg>
+					</span>
+					<span *ngIf="task.priority === 'moderate'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
+</svg>
+					</span>
+					<span *ngIf="task.priority === 'low'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+</svg>
+					</span>
+					{{task.title}}
+				</div>
+			</div>
+		</div>
+		<div class="col-4">
+			<h2>Done</h2>
+
+			<div
+				#doneList="cdkDropList"
+				(cdkDropListDropped)="drop($event)"
+				[cdkDropListConnectedTo]="[pendingList, inProcessList]"
+				[cdkDropListData]="done"
+				cdkDropList
+				class="example-list">
+				<div *ngFor="let task of done" [cdkDragData]="task" cdkDrag class="example-box" [style.background] = "getBackgroundColor()">
+					<span *ngIf="task.priority === 'high'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+</svg>
+					</span>
+					<span *ngIf="task.priority === 'moderate'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-right" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
+</svg>
+					</span>
+					<span *ngIf="task.priority === 'low'">
+						<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+</svg>
+					</span>
+					{{task.title}}
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+<div *ngIf="showForm" class="pop-up">
+	<div class="pop-up-form">
+		<div class="">
+			<h2>Add task</h2>
+			<form (ngSubmit)="addTask()" [formGroup]="addEditTaskForm" class="row login-form-container">
+				<mat-form-field class="col-md-12">
+					<mat-label>Title &nbsp;</mat-label>
+					<input class="input-text" formControlName="title" matInput type="text" required>
+				</mat-form-field>
+				<mat-form-field class="col-md-12">
+					<mat-label>Description &nbsp;</mat-label>
+					<input class="input-text" formControlName="description" matInput type="text">
+				</mat-form-field>
+				<mat-form-field appearance="fill" class="col-md-12">
+					<mat-label>Priority</mat-label>
+					<mat-select formControlName="priority" required>
+						<mat-option [value]="'high'">
+							High
+						</mat-option>
+						<mat-option [value]="'low'">
+							Low
+						</mat-option>
+						<mat-option [value]="'moderate'">
+							Moderate
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<mat-form-field class="col-md-12">
+					<mat-label>Due Date &nbsp;</mat-label>
+					<input [matDatepicker]="dp3" formControlName="dueDate" matInput readonly>
+					<mat-datepicker-toggle [for]="dp3" matSuffix></mat-datepicker-toggle>
+					<mat-datepicker #dp3 disabled="false"></mat-datepicker>
+				</mat-form-field>
+				<div class="col-md-12 flex-column align-items-center">
+					<button class="btn-main" type="submit">Add</button>
+					<button class="btn-main" (click)="closeForm()">Cancel</button>
+				</div>
+			</form>
+		</div>
+
+	</div>
+</div>
