@@ -88,3 +88,8 @@
     text-align: left !important;
     float: left;
 }
+
+.edit {
+    cursor: pointer;
+    margin-left: 10px;
+}

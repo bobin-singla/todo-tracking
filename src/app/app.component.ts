@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {Task, TaskManagerModel} from './app.model';
 import {AppService} from './app.service';
 
@@ -85,15 +85,16 @@ export class AppComponent implements OnInit {
             if (this.appService.getItem('tasks')) {
                 this.allTasks = JSON.parse(this.appService.getItem('tasks')).tasks;
             }
+            console.log(this.addEditTaskForm.value.id);
             const addTaskValues = new Task(
-                this.addEditTaskForm.value.id ? this.addEditTaskForm.value.id : this.allTasks.length,
+                this.addEditTaskForm.value.id ? this.addEditTaskForm.value.id : Date.now(),
                 this.addEditTaskForm.value.title,
                 this.addEditTaskForm.value.description,
                 this.addEditTaskForm.value.priority,
                 this.addEditTaskForm.value.dueDate,
-                this.addEditTaskForm.value.taskType,
+                this.addEditTaskForm.value.taskType ? this.addEditTaskForm.value.taskType : 'pending',
             );
-            if (this.addEditTaskForm.value.id) {
+            if (this.addEditTaskForm.value.id || this.addEditTaskForm.value.id === 0) {
                 const index = this.allTasks.findIndex(x => x.id === this.addEditTaskForm.value.id);
                 this.allTasks[index] = addTaskValues;
             } else {
@@ -142,5 +143,15 @@ export class AppComponent implements OnInit {
         } else {
             return 'green';
         }
+    }
+
+    deleteTask(task: Task) {
+        if (this.appService.getItem('tasks')) {
+            this.allTasks = JSON.parse(this.appService.getItem('tasks')).tasks;
+        }
+        const index = this.allTasks.findIndex(x => x.id === task.id);
+        this.allTasks.splice(index, 1);
+        console.log(this.allTasks);
+        this.updateLocalStorage();
     }
 }
